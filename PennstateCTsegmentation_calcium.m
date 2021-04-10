@@ -340,6 +340,13 @@ for slice = 1:handles.numSlices
     CR(D>0)=0;
     D=handles.candidateRegion(:,:,slice);
     D(CR==0)=0;
+    NewMask=imbinarize(handles.data(:,:,slice));
+    NM=zeros(512,512);
+    NM(NewMask~=0)=1;
+    NM=imfill(NM,'holes');
+    se = strel('cube',10);
+    NM=imerode(NM,se);
+    D(NM==0)=0;
     handles.candidateRegion(:,:,slice)=D;
 end
 setup() ;
@@ -2665,6 +2672,7 @@ handles.segmentedImage = handles.undoSegmented3;
 dataPlotAll(handles.segmentedImage(:,:,handles.sliceNum), handles.dataNormalized(:,:,handles.sliceNum));
 set(handles.thresh_undo,'Enable','Off')
 set(handles.thresh_num,'visible', 'Off')
+handles.threshk=0;
 axes(handles.axes5); % Switch current axes to axes11.
 cla
 set(handles.axes5,'visible', 'Off')
